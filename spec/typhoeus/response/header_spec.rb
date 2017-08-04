@@ -103,7 +103,7 @@ describe Typhoeus::Response::Header do
         end
 
         it "joins header parts" do
-          expect(header).to eq({
+          expect(header.to_hash).to eq({
             'Date' => 'Fri, 29 Jun 2012 10:09:23 GMT',
             'Content-Security-Policy' => 'default-src "self"; img-src * data: "self"; upgrade-insecure-requests;'
           })
@@ -119,7 +119,7 @@ describe Typhoeus::Response::Header do
         end
 
         it 'ignores it' do
-          expect(header).to eq({ 'Date' => 'Fri, 29 Jun 2012 10:09:23 GMT' })
+          expect(header.to_hash).to eq({ 'Date' => 'Fri, 29 Jun 2012 10:09:23 GMT' })
         end
       end
 
@@ -132,9 +132,16 @@ describe Typhoeus::Response::Header do
         end
 
         it 'returns empty string for invalid headers' do
-          expect(header).to include({ 'Date' => '', 'Content-Type' => '' })
+          expect(header.to_hash).to include({ 'Date' => '', 'Content-Type' => '' })
         end
       end
     end
+  end
+
+  it "can be Marshal'd" do
+    header = Typhoeus::Response::Header.new("Foo: Bar")
+    expect {
+      Marshal.dump(header)
+    }.not_to raise_error
   end
 end

@@ -6,7 +6,7 @@ module Typhoeus
     # Values can be strings (normal case) or arrays of strings (for duplicates headers)
     #
     # @api private
-    class Header < Hash
+    class Header
 
       # Create a new header.
       #
@@ -15,10 +15,34 @@ module Typhoeus
       #
       # @param [ String ] raw The raw header.
       def initialize(raw)
+        @hash = {}
         @raw = raw
         @sanitized = {}
         parse
-        set_default_proc_on(self, lambda { |h, k| @sanitized[k.to_s.downcase] })
+      end
+
+      def [](key)
+        @hash.fetch(key) { @sanitized[key.to_s.downcase] }
+      end
+
+      def []=(key, value)
+        @hash[key] = value
+      end
+
+      def to_hash
+        @hash
+      end
+
+      def empty?
+        @hash.empty?
+      end
+
+      def include?(hsh)
+        @hash.include?(hsh)
+      end
+
+      def fetch(key, &block)
+        @hash.fetch(key, &block)
       end
 
       # Parses the raw header.
